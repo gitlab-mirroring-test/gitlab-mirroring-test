@@ -38,7 +38,6 @@ mirror_to_github:
       -H "Accept: application/vnd.github+json" \
       https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens \
       | jq -r .token)
-    - echo $token
     # 3) GitHub remote 추가 & 푸시
     - git remote add github https://x-access-token:$token@github.com/gitlab-mirroring-test/gitlab-mirroring-test.git
-    - git push --mirror github
+    - git push --force github 'refs/heads/*:refs/heads/*'
