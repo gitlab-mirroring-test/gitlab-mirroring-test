@@ -38,7 +38,7 @@ mirror_to_github:
       https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens \
       | jq -r .token)
     # 3) GitHub remote 추가 & mirror 푸시
-    - git remote add github https://x-access-token:$token@github.com/<owner>/<repo>.git
+    - git remote add github https://x-access-token:$token@github.com/gitlab-mirroring-test/gitlab-mirroring-test.git
     - git push --mirror github
   only:
     - main       # 원하는 브랜치(또는 schedules 등)로 제한
