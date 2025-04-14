@@ -1,0 +1,44 @@
+# .gitlab-ci.yml
+stages:
+  - mirror
+
+variables:
+  # 소스 브랜치를 굳이 다시 클론할 필요 없음
+  GIT_STRATEGY: fetch
+
+mirror_to_github:
+  stage: mirror
+  image: python:3.12-alpine       # PyJWT, cryptography 설치용
+  before_script:
+    - apk add --no-cache git curl jq build-base openssl-dev libffi-dev
+    - pip install --quiet PyJWT cryptography
+    # GitHub App private key를 파일로 저장
+    - echo "$GITHUB_APP_PK" > /tmp/app.pem
+  script:
+    # 1) JWT 생성 (유효기간 10분)
+    - |
+      jwt=$(python - <<'PY'
+      import os, time, jwt, sys
+      from cryptography.hazmat.primitives import serialization
+
+      pem = open('/tmp/app.pem','rb').read()
+      payload = {
+        "iat": int(time.time()) - 60,           # clock skew 1분
+        "exp": int(time.time()) + 600,          # 10 분 후 만료
+        "iss": os.environ['GITHUB_APP_ID']
+      }
+      token = jwt.encode(payload, pem, algorithm="RS256")
+      print(token)
+      PY
+      )
+    # 2) 설치 토큰(1 시간 유효) 발급
+    - token=$(curl -s -X POST \
+      -H "Authorization: Bearer $jwt" \
+      -H "Accept: application/vnd.github+json" \
+      https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens \
+      | jq -r .token)
+    # 3) GitHub remote 추가 & mirror 푸시
+    - git remote add github https://x-access-token:$token@github.com/<owner>/<repo>.git
+    - git push --mirror github
+  only:
+    - main       # 원하는 브랜치(또는 schedules 등)로 제한
