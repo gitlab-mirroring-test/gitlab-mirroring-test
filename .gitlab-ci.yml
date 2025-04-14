@@ -14,6 +14,7 @@ mirror_to_github:
     - pip install --quiet PyJWT cryptography
     # GitHub App private key를 파일로 저장
     - echo "$GITHUB_APP_PK" > /tmp/app.pem
+    - git fetch --unshallow origin '+refs/heads/*:refs/heads/*'
   script:
     # 1) JWT 생성 (유효기간 10분)
     - |
@@ -40,4 +41,4 @@ mirror_to_github:
       | jq -r .token)
     # 3) GitHub remote 추가 & 푸시
     - git remote add github https://x-access-token:$token@github.com/gitlab-mirroring-test/gitlab-mirroring-test.git
-    - git push --force github 'refs/heads/*:refs/heads/*'
+    - git push github 'refs/heads/*:refs/heads/*'
