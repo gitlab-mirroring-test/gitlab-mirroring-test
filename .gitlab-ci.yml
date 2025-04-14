@@ -5,6 +5,7 @@ stages:
 variables:
   # 소스 브랜치를 굳이 다시 클론할 필요 없음
   GIT_STRATEGY: fetch
+  GIT_DEPTH: 0
 
 mirror_to_github:
   stage: mirror
@@ -14,7 +15,7 @@ mirror_to_github:
     - pip install --quiet PyJWT cryptography
     # GitHub App private key를 파일로 저장
     - echo "$GITHUB_APP_PK" > /tmp/app.pem
-    - git fetch --unshallow origin '+refs/heads/*:refs/heads/*'
+    - git fetch --prune --unshallow origin '+refs/heads/*:refs/heads/*'
   script:
     # 1) JWT 생성 (유효기간 10분)
     - |
