@@ -43,6 +43,5 @@ mirror_to_github:
     # 3) GitHub remote 추가 & 푸시
     - git clone https://oauth2:$GROUP_ACCESS_TOKEN@gitlab.g-dev.brictoworks.com/donus/gitlab-mirroring-test.git
     - cd gitlab-mirroring-test
-    - git remote add origin https://x-access-token:$token@github.com/gitlab-mirroring-test/gitlab-mirroring-test.git
-    - git pull origin
-    - git push --all origin
+    - git remote add github https://x-access-token:$token@github.com/gitlab-mirroring-test/gitlab-mirroring-test.git
+    - git push --mirror github
