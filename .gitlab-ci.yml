@@ -41,7 +41,7 @@ mirror_to_github:
       https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens \
       | jq -r .token)
     # 3) GitHub remote 추가 & 푸시
-    - git clone https://oauth2:$GROUP_ACCESS_TOKEN@gitlab.g-dev.brictoworks.com/donus/gitlab-mirroring-test.git
-    - cd gitlab-mirroring-test
+    - git clone --mirror https://oauth2:$GROUP_ACCESS_TOKEN@gitlab.g-dev.brictoworks.com/donus/gitlab-mirroring-test.git
+    - cd gitlab-mirroring-test.git
     - git remote add github https://x-access-token:$token@github.com/gitlab-mirroring-test/gitlab-mirroring-test.git
     - git push --mirror github
