@@ -15,6 +15,8 @@ mirror_to_github:
     - pip install --quiet PyJWT cryptography
     # GitHub App private key를 파일로 저장
     - echo "$GITHUB_APP_PK" > /tmp/app.pem
+    - git config --global user.email $GITLAB_USER_EMAIL
+    - git config --global user.name $GITLAB_USER_NAME
   script:
     # 1) JWT 생성 (유효기간 10분)
     - |
