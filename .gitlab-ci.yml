@@ -16,6 +16,7 @@ mirror_to_github:
     # GitHub App private key를 파일로 저장
     - echo "$GITHUB_APP_PK" > /tmp/app.pem
   script:
+    - echo $VALUE_REPO_URL
     # 1) JWT 생성 (유효기간 10분)
     - |
       jwt=$(python - <<'PY'
@@ -40,5 +41,7 @@ mirror_to_github:
       https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens \
       | jq -r .token)
     # 3) GitHub remote 추가 & 푸시
+    - git clone --mirror https://oauth2:$GROUP_ACCESS_TOKEN@gitlab.g-dev.brictoworks.com/donus/gitlab-mirroring-test.git
+    - cd gitlab-mirroring-test.git
     - git remote add github https://x-access-token:$token@github.com/gitlab-mirroring-test/gitlab-mirroring-test.git
     - git push --all github
